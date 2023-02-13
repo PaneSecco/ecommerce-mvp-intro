@@ -7,10 +7,9 @@ namespace csharp_oop_ecommerce_basic.model
     public class Cart
     {
         //attributes
-        private const int MAXCARR = 999;
         private string _id;
         private int currentLenght;
-        private Product[] _prod = new Product[MAXCARR];
+        private new List<Product> prodotti = new List<Product>();
 
         //properties
         public string Id
@@ -28,20 +27,16 @@ namespace csharp_oop_ecommerce_basic.model
             }
         }
 
-        public Product[] Products
+        public List<Product> Prodotti
         {
             get
             {
-                Product[] p = new Product[currentLenght];
-                for(int i=0; i<currentLenght; i++)
-                {
-                    p[i] = _prod[i];
-                }
-                return p;
+                return prodotti;
             }
-            //set{
-            // 
-            //}
+            set
+            {
+                //non lo uso
+            }
         }
 
         //constructors
@@ -56,9 +51,9 @@ namespace csharp_oop_ecommerce_basic.model
         {
             Id = c.Id;
             currentLenght = c.currentLenght;
-            for (int i = 0; i < c._prod.Length; i++)
+            for (int i = 0; i < c.prodotti.Count; i++)
             {
-                if (c._prod[i] != null)
+                if (c.prodotti[i] != null)
                 {
                     //_prod[i] = c._prod[i].Clone();
                 }
@@ -74,42 +69,29 @@ namespace csharp_oop_ecommerce_basic.model
         //metodi specifici
         public void Clear()
         {
-            currentLenght = 0;
-            for (int i = 0; i < _prod.Length; i++)
-                _prod[i] = null;
+            prodotti = null;
         }
         public void Add(Product p)
         {
-            if (currentLenght == MAXCARR)
-            {
-                throw new Exception("Unable to add, MAX dimension of internal array reached");
-            }
-
             if (p != null)
             {
-                _prod[currentLenght] = p;
-                ++currentLenght;
+                prodotti.Add(p);
             }
             else
                 throw new Exception("Invalid product");
         }
 
-        private int Lenght()
-        {
-            if (currentLenght != _prod.Length)
-                return currentLenght;
-            else
-                throw new Exception("Cart full");
-        }
-
         public int IndexOf(Product q)
         {
-            for (int i = 0; i < currentLenght; i++)
+            int index=prodotti.IndexOf(q);
+            if (index != -1)
             {
-                if (_prod[i].Equals(q))
-                    return i;
+                return index;
             }
-            return -1;
+            else
+            {
+                throw new Exception("Product not found");
+            }
         }
 
         public void Modify(Product p)
@@ -117,7 +99,7 @@ namespace csharp_oop_ecommerce_basic.model
             int i = IndexOf(p);
             if (i>=0)
             {
-                _prod[i] = p;
+                prodotti[i] = p;
             }
             else
                 throw new Exception("Product not found");
@@ -127,12 +109,10 @@ namespace csharp_oop_ecommerce_basic.model
         {
             if (IndexOf(p) != -1)
             {
-                for (int i = IndexOf(p); i < _prod.Length - 1; i++)
-                    _prod[i] = _prod[i + 1];
+                for (int i = IndexOf(p); i < prodotti.Count - 1; i++)
+                    prodotti[i] = prodotti[i + 1];
 
-                _prod[_prod.Length - 1] = null;
-
-                --currentLenght;
+                prodotti[prodotti.Count - 1] = null;
 
                 return p;
             }
